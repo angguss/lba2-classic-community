@@ -22,7 +22,7 @@ extern	LONG	Mixer_Driver_Enable;
 void	MixerAskVars( 		char ***listidentifier,
 				LONG **ptrvars 		);
 
-
+int MixerInitDLL(void*);
 /*----------------------------------------------------------------------*/
 /*	MixerChangeVolume : Change the hardware volume for MIDI,	*/
 /*			    WAVE, CD, Line, Master			*/

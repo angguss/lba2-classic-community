@@ -3,12 +3,13 @@
 
 */
 
-#include 	"\projet\lib386\lib_sys\adeline.h"
-#include 	"\projet\lib386\lib_sys\lib_sys.h"
+#include 	"adeline.h"
+#include 	"lib_sys.h"
 
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
 
@@ -19,8 +20,8 @@
  *ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ*/
 /*ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ*/
 
-UBYTE	DefString[256] ;
-UBYTE	DefValue[50] ;
+char	DefString[256] ;
+char	DefValue[50] ;
 LONG	DefHandle ;
 //LONG	DefHandleC ;
 //LONG	DefModeCopy = FALSE ;
@@ -77,7 +78,7 @@ LONG	ReadWord()
 
 LONG	PtrDefReadWord()
 {
-	UBYTE	*ptr ;
+	char* ptr;
 	UBYTE	c ;
 
 	ptr = DefString ;
@@ -104,7 +105,7 @@ LONG	PtrDefReadWord()
 
 LONG	PtrDefReadIdent()
 {
-	UBYTE	*ptr ;
+	char	*ptr ;
 	UBYTE	c ;
 
 	ptr = DefString ;
@@ -162,7 +163,7 @@ LONG	ReadString()
 */
 void	PtrDefReadString()
 {
-	UBYTE	*ptr ;
+	char	*ptr ;
 	UBYTE	c ;
 
 	ptr = DefString ;
@@ -231,7 +232,7 @@ LONG	ReadThisString()
 
 LONG	PtrDefReadThisString()
 {
-	UBYTE	*ptr ;
+	char	*ptr ;
 	UBYTE	c ;
 
 	ptr = DefString ;
@@ -282,7 +283,7 @@ LONG	SearchIdentificator( UBYTE *identificateur )
 }
 */
 
-LONG	PtrDefSearchIdentificator( UBYTE *identificateur )
+LONG	PtrDefSearchIdentificator(const char *identificateur )
 {
 	while( PtrDefReadIdent() )
 	{
@@ -320,9 +321,10 @@ UBYTE	*Def_ReadString( UBYTE *deffic, UBYTE *identificateur )
 }
 */
 
-UBYTE	*Def_ReadString( UBYTE *deffic, UBYTE *identificateur )
+char	*Def_ReadString( char *deffic, const char *identificateur )
 {
-	OrgPtrDef = PtrDef = LoadMalloc( deffic ) ;
+	OrgPtrDef = PtrDef;
+	PtrDef = static_cast<unsigned char*>(LoadMalloc(deffic));
 	if( !PtrDef )	return 0 ;
 	EndPtrDef = PtrDef + LoadMallocFileSize ;
 
@@ -380,13 +382,14 @@ LONG	Def_ReadValue( UBYTE *deffic, UBYTE *identificateur )
 }
 */
 
-LONG	Def_ReadValue( UBYTE *deffic, UBYTE *identificateur )
+LONG	Def_ReadValue(char *deffic, const char *identificateur )
 {
 	LONG	i ;
 	LONG	value ;
 	UBYTE	c ;
 
-	OrgPtrDef = PtrDef = LoadMalloc( deffic ) ;
+	OrgPtrDef = PtrDef;
+	PtrDef = static_cast<unsigned char*>(LoadMalloc(deffic));
 	if( !PtrDef )	return -1 ;
 	EndPtrDef = PtrDef + LoadMallocFileSize ;
 
@@ -403,8 +406,10 @@ LONG	Def_ReadValue( UBYTE *deffic, UBYTE *identificateur )
 				for( i=0; i<strlen(DefString)-1; i++ )
 				{
 					c = DefString[i] ;
-					if( c <= '9' )	c -= '0' ;
-					else		c = (c&~32) - 'A' + 10 ;
+					if( c <= '9' )	
+						c -= '0' ;
+					else		
+						c = (c&~32) - 'A' + 10 ;
 					value = value*16 + c ;
 				}
 				return value ;
@@ -466,13 +471,14 @@ LONG	Def_ReadValue2( UBYTE *deffic, UBYTE *identificateur, LONG *result )
 }
 */
 
-LONG	Def_ReadValue2( UBYTE *deffic, UBYTE *identificateur, LONG *result )
+LONG	Def_ReadValue2( char *deffic, const char *identificateur, LONG *result )
 {
 	LONG	i ;
 	LONG	value ;
 	UBYTE	c ;
 
-	OrgPtrDef = PtrDef = LoadMalloc( deffic ) ;
+	OrgPtrDef = PtrDef;
+	PtrDef = static_cast<unsigned char*>(LoadMalloc(deffic));
 	if( !PtrDef )	return FALSE ;
 	EndPtrDef = PtrDef + LoadMallocFileSize ;
 
@@ -568,11 +574,12 @@ LONG	Def_WriteString( UBYTE *deffic, UBYTE *identificateur, UBYTE *string )
 }
 */
 
-LONG	Def_WriteString( UBYTE *deffic, UBYTE *identificateur, UBYTE *string )
+LONG	Def_WriteString(char *deffic, const char *identificateur, const char *string )
 {
 	WORD	crlf = 0x0A0D ;
 
-	OrgPtrDef = PtrDef = LoadMalloc( deffic ) ;
+	OrgPtrDef = PtrDef;
+	PtrDef = static_cast<unsigned char*>(LoadMalloc(deffic));
 
 	if( PtrDef )	// fichier existe
 	{
@@ -588,7 +595,7 @@ LONG	Def_WriteString( UBYTE *deffic, UBYTE *identificateur, UBYTE *string )
 
 			// ecrit parametre
 			Write( DefHandle, " ", 1 ) ;
-			Write( DefHandle, string, strlen( string ) ) ;
+			Write( DefHandle, (void*)(string), strlen( string ) ) ;
 			Write( DefHandle, &crlf, 2 ) ;
 
 			PtrDefReadThisString() ;	// lit ancien parametre
@@ -615,10 +622,10 @@ LONG	Def_WriteString( UBYTE *deffic, UBYTE *identificateur, UBYTE *string )
 	}
 
 	// ecrit identificateur
-	Write( DefHandle, identificateur, strlen(identificateur) ) ;
+	Write( DefHandle, (void*)identificateur, strlen(identificateur) ) ;
 	Write( DefHandle, ": ", 2 ) ;
 	// ecrit parametre string
-	Write( DefHandle, string, strlen( string ) ) ;
+	Write( DefHandle, (void*)string, strlen( string ) ) ;
 	Write( DefHandle, &crlf, 2 ) ;
 
 	Close( DefHandle ) ;
@@ -628,7 +635,7 @@ LONG	Def_WriteString( UBYTE *deffic, UBYTE *identificateur, UBYTE *string )
 
 /*ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ*/
 
-LONG	Def_WriteValue( UBYTE *deffic, UBYTE *identificateur, LONG value )
+LONG	Def_WriteValue(char *deffic, const char *identificateur, LONG value )
 {
 	itoa( value, DefValue, 10 ) ;
 	return Def_WriteString( deffic, identificateur, DefValue ) ;

@@ -2,20 +2,23 @@
 #include <string.h>
 #include <process.h>
 
-#include "f:\projet\lib386\lib_sys\adeline.h"
-#include "f:\projet\lib386\lib_sys\lib_sys.h"
+#include "adeline.h"
+#include "lib_sys.h"
 
-#include "f:\projet\lib386\lib_midi\lib_midi.h"
-#include "f:\projet\lib386\lib_samp\lib_wave.h"
-#include "f:\projet\lib386\lib_mix\lib_mix.h"
-#include "f:\projet\lib386\lib_svga\lib_svga.h"
+#include "..\lib_midi\lib_midi.h"
+#include "..\lib_samp\lib_wave.h"
+#include "..\lib_mix\lib_mix.h"
+#include "..\lib_svga\lib_svga.h"
+#include <stdio.h>
 
 
 char	Driver[_MAX_PATH] ;
 
 // timer proc for ail_lib
 
-HTIMER	HandleTimer ;
+//HTIMER	HandleTimer ;
+// TODO: Probably incorrect type
+int HandleTimer;
 
 void	NewProc08() ; // dans timer.asm
 
@@ -41,7 +44,7 @@ WORD	GiveIndexTab( UBYTE **tab, UBYTE *identificateur )
 
 	while( *tab[0] != 0 )
 	{
-		if( !stricmp( *tab, identificateur ) )
+		if( !stricmp( (const char*)*tab, (const char*)identificateur ) )
 		{
 			return i ;
 		}
@@ -142,11 +145,12 @@ void	InitAdelineSystem( char *name, LONG inits )
 
 			while( **ptridentifier )
 			{
-				if (!Def_ReadValue2( name, *ptridentifier, ptrvar++ ))
-				{
-					printf( "Error %s: '%s' missing\n", name, *ptridentifier ) ;
-					exit( 1 ) ;
-				}
+				// TODO: Reimplement
+				//if (!Def_ReadValue2( name, *ptridentifier, ptrvar++ ))
+				//{
+				//	printf( "Error %s: '%s' missing\n", name, *ptridentifier ) ;
+				//	exit( 1 ) ;
+				//}
 
 				ptridentifier++ ;
 			}
@@ -212,23 +216,25 @@ void	InitAdelineSystem( char *name, LONG inits )
 		else
 			Driver[0]=0 ;
 
-		if( Driver[0] != 0 )	/* si driver wave */
-		{
+		// TODO: Reimplement
+		//if( Driver[0] != 0 )	/* si driver wave */
+		//{
 
-			if( !MixerInitDLL( Driver ) )	exit( 1 ) ;
+		//	if( !MixerInitDLL( Driver ) )	exit( 1 ) ;
 
-			MixerAskVars( &ptridentifier, &ptrvar ) ;
+		//	MixerAskVars( &ptridentifier, &ptrvar ) ;
 
-			while( **ptridentifier )
-			{
-				if (!Def_ReadValue2( name, *ptridentifier, ptrvar++ ))
-				{
-					printf( "Error %s: '%s' missing\n", name, *ptridentifier ) ;
-					exit( 1 ) ;
-				}
-				ptridentifier++;
-			}
-		}
+		//	while( **ptridentifier )
+		//	{
+		//		// TODO: Reimplement
+		//		//if (!Def_ReadValue2( name, *ptridentifier, ptrvar++ ))
+		//		//{
+		//		//	printf( "Error %s: '%s' missing\n", name, *ptridentifier ) ;
+		//		//	exit( 1 ) ;
+		//		//}
+		//		ptridentifier++;
+		//	}
+		//}
 	}
 
 //תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת
@@ -267,11 +273,12 @@ void	InitAdelineSystem( char *name, LONG inits )
 
 			while( **ptridentifier )
 			{
-				if (!Def_ReadValue2( name, *ptridentifier, ptrvar++ ))
+				// 
+				/*if (!Def_ReadValue2(name, *ptridentifier, ptrvar++))
 				{
-					printf( "Error %s: '%s' missing\n", name, *ptridentifier ) ;
-					exit( 1 ) ;
-				}
+					printf("Error %s: '%s' missing\n", name, *ptridentifier);
+					exit(1);
+				}*/
 				ptridentifier++;
 			}
 
@@ -300,16 +307,16 @@ void	InitAdelineSystem( char *name, LONG inits )
 //תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת
 // init Timer (TimerRef et NbF) selon midi install‚e ou non
 
-	if( Midi_Driver_Enable )
-	{
-		HandleTimer = AIL_register_timer( NewProc08 ) ;
-		AIL_set_timer_frequency( HandleTimer, 50 ) ;
-		AIL_start_timer( HandleTimer ) ;
-	}
-	else
-	{
-		InitTimer() ;
-	}
+	//if( Midi_Driver_Enable )
+	//{
+	//	HandleTimer = AIL_register_timer( NewProc08 ) ;
+	//	AIL_set_timer_frequency( HandleTimer, 50 ) ;
+	//	AIL_start_timer( HandleTimer ) ;
+	//}
+	//else
+	//{
+	//	InitTimer() ;
+	//}
 
 //	InitSample() ;
 
@@ -320,11 +327,13 @@ void	InitAdelineSystem( char *name, LONG inits )
 void	ClearAdelineSystem()
 {
 //	ClearSample() ;
-
-	if( !Midi_Driver_Enable )	ClearTimer() ;
+	//TODO: Reimplement
+	//if( !Midi_Driver_Enable )	
+	//	ClearTimer() ;
 	ClearKeyboard() ;
 	ClearGraphSvga() ;
-	ClearSystem() ;
+	// TODO: Reimplement
+	//ClearSystem() ;
 	ClearWave();
 	ClearMidi();
 }

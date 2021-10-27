@@ -8,7 +8,7 @@
 			- Mshrink
 */
 
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,29 +20,29 @@
 ULONG	LoadMallocFileSize ;
 
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
-void	*LoadMalloc( char *name )
-{
-	LONG	handle	;
-	ULONG	sizer	;
-	void	*pt	;
-
-	LoadMallocFileSize = FileSize( name )		;
-	if ( !LoadMallocFileSize )	return( 0 )	;
-
-	pt = Malloc( LoadMallocFileSize )		;
-	if ( pt == 0 )	return( 0 )	;
-
-	handle = OpenRead( name )	;
-	if ( !handle)	return( 0 )	;
-
-	sizer = Read( handle, pt, LoadMallocFileSize );
-	if ( sizer != LoadMallocFileSize )
-	{
-		Close( handle ) ;
-		return( 0 );
-	}
-
-	Close( handle )			;
-	return( pt )			;
-}
+//char	*LoadMalloc( char *name )
+//{
+//	LONG	handle	;
+//	ULONG	sizer	;
+//	void	*pt	;
+//
+//	LoadMallocFileSize = FileSize( name )		;
+//	if ( !LoadMallocFileSize )	return( 0 )	;
+//
+//	pt = Malloc( LoadMallocFileSize )		;
+//	if ( pt == 0 )	return( 0 )	;
+//
+//	handle = OpenRead( name )	;
+//	if ( !handle)	return( 0 )	;
+//
+//	sizer = Read( handle, pt, LoadMallocFileSize );
+//	if ( sizer != LoadMallocFileSize )
+//	{
+//		Close( handle ) ;
+//		return( 0 );
+//	}
+//
+//	Close( handle )			;
+//	return( (char*)pt )			;
+//}
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/

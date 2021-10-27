@@ -1,12 +1,13 @@
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "adeline.h"
 #include "lib_sys.h"
-#include "\projet\lib386\lib_samp\lib_wave.h"
+#include "..\lib_samp\lib_wave.h"
 
 #define	RECOVER_AREA	500
 
@@ -44,7 +45,7 @@ void	*LoadMalloc_HQR( UBYTE *name, UWORD index )
 	UBYTE		*ptrdecomp ;
 	T_HEADER	header ;
 
-	handle = OpenRead( name ) ;
+	handle = OpenRead( (char*)name ) ;
 	if( !handle )	return 0L ;
 
 	Read( handle, &buffer, 4L ) ;
@@ -62,7 +63,7 @@ void	*LoadMalloc_HQR( UBYTE *name, UWORD index )
 	Seek( handle, seekindex, SEEK_START ) ;
 	Read( handle, &header, sizeof( header ) ) ;
 
-	ptrbloc = Malloc( header.SizeFile + RECOVER_AREA ) ;
+	ptrbloc = (unsigned char*) Malloc( header.SizeFile + RECOVER_AREA ) ;
 	if( !ptrbloc )
 	{
 		Close( handle ) ;
@@ -104,7 +105,7 @@ ULONG	Load_HQR( UBYTE *name, void *ptrdest, UWORD index )
 	UBYTE		*ptrdecomp ;
 	T_HEADER	header ;
 
-	handle = OpenRead( name ) ;
+	handle = OpenRead( (char*)name ) ;
 	if( !handle )	return 0L ;
 
 	Read( handle, &buffer, 4L ) ;
@@ -202,7 +203,7 @@ T_HQR_HEADER	*HQR_Init_Ressource(	char *hqrname,
 
 	if( !FileSize( hqrname ) )	return 0 ;	// fichier ok ?
 
-	header =	Malloc(	sizeof(T_HQR_HEADER)
+	header =	(T_HQR_HEADER*)Malloc(	sizeof(T_HQR_HEADER)
 				+
 				sizeof(T_HQR_BLOC) * maxindex	) ;
 
@@ -216,7 +217,7 @@ T_HQR_HEADER	*HQR_Init_Ressource(	char *hqrname,
 	header->FreeSize = maxsize ;
 	header->MaxIndex = maxindex ;
 	header->NbIndex = 0 ;
-	header->Buffer = buffer ;
+	header->Buffer = (unsigned char*)buffer ;
 
 	return header ;					// header
 }

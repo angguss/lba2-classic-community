@@ -1,4 +1,4 @@
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +8,7 @@
 #include "lib_sys.h"
 
 char	ItoaTempoString[40] ;		/* c'est 17 le max je crois */
-
+									/* it's 17 the max i think */
 char	*Itoa( LONG value )
 {
 	return itoa( value, ItoaTempoString, 10 ) ;

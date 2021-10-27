@@ -11,7 +11,7 @@
 	#pragma	library	("f:\projet\lib386\lib_sys\lib_sys.lib");
 #endif
 
-#include	"f:\projet\lib386\lib_sys\dll.h"
+#include	"dll.h"
 
 extern	volatile	UWORD	Key	;	/* scan code keyboard */
 
@@ -252,6 +252,8 @@ extern	UWORD	WaitNbTicks ;
 extern	UWORD	CmptFrame ;
 extern	UWORD	Cmpt_18 ;
 
+void	InitSystem();
+
 void	SetTimer( WORD divisor ) ;
 WORD	GetTimer() ;
 
@@ -261,7 +263,7 @@ WORD	GetTimer() ;
 LONG	Def_WriteString( UBYTE *deffic, UBYTE *indentificateur, UBYTE *string ) ;
 LONG	Def_WriteValue( UBYTE *deffic, UBYTE *indentificateur, LONG value ) ;
 
-UBYTE	*Def_ReadString( UBYTE *deffic, UBYTE *indentificateur ) ;
+char	*Def_ReadString(char *deffic, const char *indentificateur ) ;
 LONG	Def_ReadValue( UBYTE *deffic, UBYTE *indentificateur ) ;
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 /*				BUFFER_A.ASM				*/

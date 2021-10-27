@@ -194,7 +194,7 @@ ULONG cdecl DLL_size(void *source, ULONG flags)
       lx=(ULONG) source;
    else
       {
-      lx=open((BYTE *) source,O_RDONLY | O_BINARY);
+      lx=open((const char *) source,O_RDONLY | O_BINARY);
 
       if (lx==-1)                           // error opening file?
          return 0;
@@ -211,7 +211,7 @@ ULONG cdecl DLL_size(void *source, ULONG flags)
    //
 
    src_ptr=DLL_read(lx,LX_offset, flags, cword, 2);
-   if (strcmp(cword,"LX"))
+   if (strcmp((const char*)cword,"LX"))
       {
       //
       // Error: Invalid LX file
@@ -275,7 +275,7 @@ void *cdecl DLL_load(void *source, ULONG flags, void *dll)
       lx=(ULONG) source;
    else
       {
-      lx=open((BYTE *) source,O_RDONLY | O_BINARY);
+      lx=open((const char *) source,O_RDONLY | O_BINARY);
       if (lx==-1)                           // error opening file?
 	 return NULL;
       }
@@ -301,7 +301,7 @@ void *cdecl DLL_load(void *source, ULONG flags, void *dll)
 
    memset(dll,0,dll_size);
 
-   dll_ptr=dll;
+   dll_ptr=(unsigned char*)dll;
 
    //
    // Get LX header offset
@@ -314,7 +314,7 @@ void *cdecl DLL_load(void *source, ULONG flags, void *dll)
    //
 
    src_ptr=DLL_read(lx,LX_offset, flags, cword, 2);
-   if (strcmp(cword,"LX"))
+   if (strcmp((const char*)cword,"LX"))
       {
       //
       // Error: Invalid LX file
@@ -513,7 +513,7 @@ LONG cdecl FILE_size(BYTE *filename)
 
    disk_err = 0;
 
-   handle = open(filename,O_RDONLY | O_BINARY);
+   handle = open((const char*)filename,O_RDONLY | O_BINARY);
    if (handle==-1)
       {
       disk_err = FILE_NOT_FOUND;
@@ -532,7 +532,7 @@ void * cdecl FILE_read(BYTE *filename, void *dest)
 {
    LONG i,handle;
    LONG len;
-   BYTE *buf, *mem;
+   char *buf, *mem;
 
    disk_err = 0;
 
@@ -543,7 +543,7 @@ void * cdecl FILE_read(BYTE *filename, void *dest)
       return NULL;
       }
 
-   buf = mem = (dest==NULL)? Malloc(len) : dest;
+   buf = mem = (char*)((dest == NULL) ? Malloc(len) : dest);
 
    if (buf==NULL)
       {
@@ -551,7 +551,7 @@ void * cdecl FILE_read(BYTE *filename, void *dest)
       return NULL;
       }
 
-   handle = open(filename,O_RDONLY | O_BINARY);
+   handle = open((const char*)filename,O_RDONLY | O_BINARY);
    if (handle==-1)
       {
       Free(mem);
@@ -579,7 +579,7 @@ LONG cdecl FILE_write(BYTE *filename, void *buf, ULONG len)
 
    disk_err = 0;
 
-   handle = open(filename,O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
+   handle = open((const char*)filename,O_CREAT | O_RDWR | O_TRUNC | O_BINARY,
       S_IREAD | S_IWRITE);
    if (handle==-1)
       {
@@ -612,7 +612,7 @@ LONG cdecl FILE_append(BYTE *filename, void *buf, ULONG len)
 
    disk_err = 0;
 
-   handle = open(filename,O_APPEND | O_RDWR | O_BINARY);
+   handle = open((const char*)filename,O_APPEND | O_RDWR | O_BINARY);
    if (handle==-1)
       {
       disk_err = FILE_NOT_FOUND;

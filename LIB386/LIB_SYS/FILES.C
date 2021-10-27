@@ -15,10 +15,11 @@
 			- AddExt
 */
 
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 
 #include "adeline.h"
@@ -28,57 +29,84 @@
 /*--------------------------------------------------------------------------*/
 LONG	OpenRead( char *name )
 {
+#ifdef DOS
 	int	handle	;
 
 	if ( _dos_open( name, O_RDONLY, &handle ))	handle = 0	;
 	return(handle)	;
+#else
+	return 0;
+#endif
+
 
 }
 /*--------------------------------------------------------------------------*/
 LONG	OpenWrite( char *name )
 {
+#ifdef DOS
 	int	handle	;
 
 	if ( _dos_creat( name, _A_NORMAL, &handle ))	handle = 0	;
 	return(handle)	;
-
+#else
+	return 0;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 LONG	OpenReadWrite( char *name )
 {
+#ifdef DOS
 	int	handle	;
 
 	if ( _dos_open( name, O_RDWR, &handle ))	handle = 0	;
 	return(handle)	;
-
+#else
+	return 0;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 ULONG	Read( LONG handle, void *buffer, ULONG lenread  )
 {
+#ifdef DOS
 	ULONG	howmuch	;
 
 	if ( lenread == 0xFFFFFFFFL )	/*	-1L	*/
 		lenread = 16000000L	;/* Ca Accelere !! 	*/
 	_dos_read( handle, buffer, lenread, (unsigned int *)&howmuch )	;
 	return( howmuch )	;
+#else
+	return 0;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 ULONG	Write( LONG handle, void *buffer, ULONG lenwrite )
 {
+#ifdef DOS
 	ULONG	howmuch	;
 
 	_dos_write( handle, buffer, lenwrite, (unsigned int *)&howmuch )	;
 	return( howmuch )	;
+#else
+	return 0;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 void	Close( LONG handle )
 {
+#ifdef DOS
 	_dos_close( handle )	;
+#else
+	return ;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 LONG	Seek( LONG handle, LONG position, LONG mode )
 {
+#ifdef DOS
 	return(lseek( handle, position, mode ))	;
+#else
+	return 0;
+#endif
 }
 /*--------------------------------------------------------------------------*/
 LONG	Delete( char *name )
@@ -140,13 +168,13 @@ LONG	Copy( UBYTE *sname, UBYTE *dname )
 	LONG	dhandle ;
 	UBYTE	c ;
 
-	size = FileSize( sname ) ;
+	size = FileSize((char*)sname ) ;
 	if( !size )	return 0L ;
 
-	shandle = OpenRead( sname ) ;
+	shandle = OpenRead((char*)sname ) ;
 	if( !shandle )	return 0L ;
 
-	dhandle = OpenWrite( dname ) ;
+	dhandle = OpenWrite((char*)dname ) ;
 	if( !dhandle )
 	{
 		Close( shandle ) ;
@@ -171,13 +199,13 @@ LONG	Copy( UBYTE *sname, UBYTE *dname )
 }
 /*--------------------------------------------------------------------------*/
 
-LONG	CopyBak( UBYTE *name )
+LONG	CopyBak( char *name )
 {
-	UBYTE	string[256] ;
+	char	string[256] ;
 
 	strcpy( string, name ) ;
 	AddExt( string, ".BAK" ) ;
-	return Copy( name, string ) ;
+	return Copy((unsigned char*) name, (unsigned char*)string ) ;
 }
 
 

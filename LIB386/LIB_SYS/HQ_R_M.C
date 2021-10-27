@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#include "\projet\lib386\lib_sys\adeline.h"
-#include "\projet\lib386\lib_sys\lib_sys.h"
+#include "adeline.h"
+#include "lib_sys.h"
 
 #define	RECOVER_AREA	500
 
@@ -29,7 +29,7 @@ LONG	HQRM_Load( UBYTE *name, UWORD index, void **ptrptr )
 	UBYTE		*ptrdecomp ;
 	T_HEADER	header ;
 
-	handle = OpenRead( name ) ;
+	handle = OpenRead( (char*)name ) ;
 	if( !handle )	return FALSE ;
 
 	Read( handle, &buffer, 4L ) ;

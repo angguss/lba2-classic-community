@@ -1,11 +1,12 @@
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <memory.h>
 
-#include "\projet\lib386\lib_sys\adeline.h"
-#include "\projet\lib386\lib_sys\lib_sys.h"
+#include "adeline.h"
+#include "lib_sys.h"
 
 /*ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ*
 	     Û   Û Û฿฿฿Û       ÛÜ ÜÛ Û฿฿฿฿ ÛÜ ÜÛ Û฿฿฿Û Û฿฿฿Û Û  Ü฿
@@ -31,7 +32,7 @@ LONG	HQM_Init_Memory( ULONG size )
 {
 	if( !Ptr_HQM_Memory )
 	{
-		Ptr_HQM_Memory = Malloc( size + 500 ) ;	// recover area
+		Ptr_HQM_Memory = (unsigned char*)Malloc( size + 500 ) ;	// recover area
 		if( Ptr_HQM_Memory )
 		{
 			Size_HQM_Memory = size ;

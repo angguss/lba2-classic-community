@@ -65,7 +65,7 @@ extern  LONG            Mouse_X_Dep ;
 extern  LONG            Mouse_Y_Dep ;
 extern	UBYTE		*GphMouse ;
 
-extern void __loadds __far click_handler(int ,int ,int );
+extern void /*__loadds __far*/ click_handler(int ,int ,int );
 extern void SetMouseBox(long ,long ,long ,long );
 extern void SetMouseSpeed(long ,long );
 extern void SetMousePos(long ,long );

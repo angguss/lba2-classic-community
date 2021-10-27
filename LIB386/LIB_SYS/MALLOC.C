@@ -8,7 +8,7 @@
 			- Mshrink
 */
 
-#include <i86.h>
+//#include <i86.h>
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +54,7 @@ void	*DosMalloc( LONG size, ULONG *handle )
 		return(0)	;//	Failed
 	return( (void*)((r.x.eax & 0xFFFF) << 4 )) ;//	Ok, Take this!
 */
+#ifdef DOS
 	union	REGS	r	;
 	ULONG	strat		;
 	ULONG	addr		;
@@ -95,17 +96,24 @@ void	*DosMalloc( LONG size, ULONG *handle )
 	int386( 0x21, &r, &r )	;/*	Set alloc strategie		*/
 #endif
 	return((void *)addr)	;
+#else
+	return (void*)0;
+#endif
 }
 
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 /*	Special, Free Allocated Memory Under First Meg			    */
 void	DosFree( ULONG handle )
 {
+#ifdef DOS
 	union	REGS	r	;
 
 	r.x.eax = 0x0101	;/*	Function allocate Dos Memory	*/
 	r.x.edx = handle	;/*	DPMI Selector			*/
 	int386( 0x31, &r, &r )	;/*	Invoke DPMI			*/
+#else
+
+#endif
 }
 
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
@@ -171,6 +179,7 @@ LONG	myfree( void *ptr )
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 void	*SmartMalloc( LONG lenalloc )
 {
+#ifdef DOS
 	union	REGS	r	;
 	ULONG	strat		;
 	ULONG	addr		;
@@ -198,11 +207,15 @@ void	*SmartMalloc( LONG lenalloc )
 	int386( 0x21, &r, &r )	;/*	Set alloc strategie		*/
 #endif
 	return((void *)addr)	;
+#else
+	return nullptr;
+#endif
 }
 
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 void	*Malloc( LONG lenalloc )
 {
+#ifdef DOS
 	union REGS regs		;
 	struct SREGS sregs	;
 	void	*ptr ;
@@ -265,10 +278,14 @@ void	*Malloc( LONG lenalloc )
 	int386x( DPMI_INT, &regs, &regs, &sregs )	;
 
 	return( (void *)MemInfo.LargestBlockAvail )	;
+#else
+	return nullptr;
+#endif
 }
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 void	Free( void *buffer )
 {
+#ifdef DOS
 	union REGS regs		;
 	struct SREGS sregs	;
 	void	*ptr ;
@@ -317,6 +334,9 @@ void	Free( void *buffer )
 	{
 		free( buffer ) ;
 	}
+#else
+	
+#endif
 }
 /*컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 void	*Mshrink( void *buffer, ULONG taille )
