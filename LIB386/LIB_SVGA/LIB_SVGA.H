@@ -25,12 +25,12 @@ extern  WORD    ClipYmin        ;
 extern  WORD    ClipXmax        ;
 extern  WORD    ClipYmax        ;
 
-extern  ULONG   TabOffLine      ;
+extern  ULONG   TabOffLine[480] ;
 extern  UBYTE   *Phys           ;
 extern  UBYTE   *Log            ;
 extern  UBYTE   *MemoLog        ;
-extern  WORD    Screen_X        ;
-extern  WORD    Screen_Y        ;
+extern  signed int    Screen_X  ;
+extern  signed int Screen_Y     ;
 extern  UBYTE   Text_Ink        ;
 extern  UBYTE   Text_Paper      ;
 extern  UBYTE   OldVideo        ;
@@ -81,6 +81,10 @@ extern void ClearMouse(void);
 void    PalOne( UBYTE coul, UBYTE r, UBYTE v, UBYTE b ) ;
 void    PalMulti( WORD startcoul, WORD nbcoul, UBYTE *pal ) ;
 void    Palette( void *pal )                            ;
+void	ResetPalette();
+
+//static HRESULT CALLBACK WinModeCallback(LPDDSURFACEDESC pdds, LPVOID lParam);
+
 /*-----------------------------------------------------------------------------*/
 /*                              FONT.ASM                                        */
 void    CoulFont( LONG couleur )                                ;

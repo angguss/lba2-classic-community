@@ -190,9 +190,9 @@ static void CreateIdentityPalette()
 
 	if(hpal)
 	{
-		hpal = SelectPalette(dc, hpal, FALSE)	;
+		hpal = SelectPalette(dc, (HPALETTE)hpal, FALSE)	;
 		RealizePalette(dc)			;
-		hpal = SelectPalette(dc, hpal, FALSE)	;
+		hpal = SelectPalette(dc, (HPALETTE)hpal, FALSE)	;
 		DeleteObject(hpal)			;
 	}
 
