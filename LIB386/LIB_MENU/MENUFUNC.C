@@ -1,6 +1,6 @@
-#include	"\projet\lib386\lib_sys\adeline.h"
-#include	"\projet\lib386\lib_sys\lib_sys.h"
-#include	"\projet\lib386\lib_svga\lib_svga.h"
+#include	"..\lib_sys\adeline.h"
+#include	"..\lib_sys\lib_sys.h"
+#include	"..\lib_svga\lib_svga.h"
 
 #include	"lib_menu.h"
 
@@ -193,7 +193,7 @@ void	InputString( T_MENU *ptrmenu, WORD handle, WORD maxcar )
 	WORD		memoasciimode ;
 
 	UBYTE		car ;
-	UBYTE		string[256] ;
+	char		string[256] ;
 
 	T_CLICK_BOX	*ptrlcb ;
 
@@ -207,7 +207,7 @@ void	InputString( T_MENU *ptrmenu, WORD handle, WORD maxcar )
 	if( n==nblcb )	return ;
 
 	numlcb = n ;
-	strcpy( string, ptrlcb->PtrString ) ;
+	strcpy( string, (const char*)ptrlcb->PtrString ) ;
 
 	pc = -1 ;			/* pos curseur (-1 no cursor) */
 	start = 0 ;
@@ -402,7 +402,7 @@ void	InputString( T_MENU *ptrmenu, WORD handle, WORD maxcar )
 
 	if( (mykey==A_RETURN) OR (myclick) )
 	{
-		strcpy( ptrlcb->PtrString, string ) ;
+		strcpy((char*)ptrlcb->PtrString, string ) ;
 	}
 
 	DrawBox( ptrmenu, numlcb, NO_FLAG, TRUE ) ;
@@ -422,7 +422,7 @@ void	Message( UBYTE *message, LONG flag )
 	T_MENU	menu ;
 	WORD	len ;
 
-	len = strlen(message)*SizeCar / (SizeCar+7) + 2 ;
+	len = strlen((const char*)message)*SizeCar / (SizeCar+7) + 2 ;
 
 	if( !OpenMenu( &menu, len,2 ) )	return ;
 	AddText( &menu, 0,0, len,2, FLAG_CENTRE+FLAG_CONTOUR, message ) ;
@@ -448,7 +448,7 @@ LONG	Confirm( UBYTE *message, UBYTE *oui, UBYTE *non )
 	T_MENU	menu ;
 	WORD	len, select ;
 
-	len = strlen(message)*SizeCar / (SizeCar+7) + 2 ;
+	len = strlen((const char*)message)*SizeCar / (SizeCar+7) + 2 ;
 
 	if( !OpenMenu( &menu, len,3 ) )	return 2 ;
 	AddText( &menu, 0,0, len,2, FLAG_CENTRE+FLAG_CONTOUR, message ) ;

@@ -1,7 +1,7 @@
-#include	"\projet\lib386\lib_sys\adeline.h"
-#include	"\projet\lib386\lib_sys\lib_sys.h"
-#include	"\projet\lib386\lib_svga\lib_svga.h"
-#include	"\projet\lib386\lib_menu\lib_menu.h"
+#include	"..\lib_sys\adeline.h"
+#include	"..\lib_sys\lib_sys.h"
+#include	"..\lib_svga\lib_svga.h"
+#include	"..\lib_menu\lib_menu.h"
 
 #include	<stdio.h>
 #include	<stdlib.h>
@@ -91,6 +91,7 @@ int my_sort_function( char **a, char **b)
 
 void	ScanFiles( UBYTE *selection, LONG flag )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 	ULONG	rc ;
 	UBYTE	*ptr ;
@@ -119,24 +120,32 @@ void	ScanFiles( UBYTE *selection, LONG flag )
 
 	if( NbFiles )	/* ? */
 		qsort( (void *)IndexFiles, NbFiles, sizeof( char * ), MySortCompFunc );
-
 	DrawListFiles( flag ) ;
+#else
+	// TODO: Implement
+#endif
 }
 
 /*ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ*/
 
 WORD	ThereIsFiles( UBYTE *path )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 
 	if( !_dos_findfirst( path, _A_NORMAL, &fileinfo ) )
 		return 1 ;
 	else
 		return 0 ;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 void	ScanDirs( UBYTE *selection )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 	ULONG	rc ;
 	UBYTE	*ptr ;
@@ -180,6 +189,9 @@ void	ScanDirs( UBYTE *selection )
 			WinSelect( &DirsWindow, n, B_ROUGE+1 ) ;
 		}
 	}
+#else
+	// TODO: Implement
+#endif
 
 	ShowMouse( 1 ) ;
 }
@@ -188,6 +200,7 @@ void	ScanDirs( UBYTE *selection )
 
 void	ScanDrives()
 {
+#ifdef DOS
 	unsigned	total ;
 	unsigned	drive ;
 	unsigned	orgdrive ;
@@ -217,6 +230,9 @@ void	ScanDrives()
 	WinList( &DirsWindow, IndexDirs, NbDirs, 14 ) ;
 	FlipWindow( &DirsWindow ) ;
 	ShowMouse( 1 ) ;
+#else
+	// TODO: Implement
+#endif
 }
 
 /*ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ*/
@@ -233,6 +249,7 @@ WORD	FileSelector(	UBYTE *titre,
 			UBYTE *defaultname,
 			LONG flags )
 {
+#ifdef DOS
 	WORD	n, num ;
 	WORD	flag, handle ;
 	WORD	mode = 0 ;
@@ -549,6 +566,10 @@ WORD	FileSelector(	UBYTE *titre,
 	chdir( memopath ) ;
 
 	return rcode ;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 /*ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ*/

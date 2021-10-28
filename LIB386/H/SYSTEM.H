@@ -72,7 +72,8 @@
 
 #ifdef	_WIN32
 #include	<SYSTEM\WINSYS.H>
-#include	<AIL\MSSW.H>
+// TODO: Resolve include
+//#include	<AIL\MSSW.H>
 #else// _WIN32
 #include	<SYSTEM\DOSSYS.H>
 #include	<AIL\MSS.H>

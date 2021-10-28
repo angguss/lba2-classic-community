@@ -1,6 +1,9 @@
-#include	"\projet\lib386\lib_sys\adeline.h"
-#include	"\projet\lib386\lib_sys\lib_sys.h"
-#include	"\projet\lib386\lib_svga\lib_svga.h"
+#include	"..\lib_sys\adeline.h"
+#include	"..\lib_sys\lib_sys.h"
+#include	"..\lib_svga\lib_svga.h"
+
+// TODO: This shouldn't be coming from the source
+//#include "..\SOURCES\DEFINES.H"
 
 #include	"lib_menu.h"
 
@@ -263,7 +266,7 @@ void	WinSelect( T_WINLIST *wlist, WORD selected, WORD coul )
 			Text( wlist->WindowCol, wlist->WindowLig, "%s", *index ) ;
 			CopyBlockPhys(	wlist->WindowCol,
 					wlist->WindowLig,
-					wlist->WindowCol+strlen(*index)*SizeCar-1,
+					wlist->WindowCol+strlen((const char*)*index)*SizeCar-1,
 					wlist->WindowLig+7 ) ;
 			ShowMouse( 1 ) ;
 		}
@@ -337,7 +340,7 @@ void	DrawBox( T_MENU *ptrmenu, WORD numlcb, WORD pushed, WORD copyphys )
 	WORD		flags ;
 	WORD		nbaffcar ;
 	WORD		len, x, y ;
-	UBYTE		string[256] ;
+	char		string[256] ;
 	UBYTE		valuestring[64] ;
 	T_CLICK_BOX	*ptrlcb ;
 
@@ -367,10 +370,10 @@ void	DrawBox( T_MENU *ptrmenu, WORD numlcb, WORD pushed, WORD copyphys )
 
 	/* aff du text */
 
-	strcpy( string, ptrlcb->PtrString ) ;
+	strcpy( string, (const char*)ptrlcb->PtrString ) ;
 	if( ptrlcb->Type == TYPE_CHANGE_VALUE )
 	{
-		strcat( string, itoa( *(ptrlcb->PtrVar), valuestring, 10 ) ) ;
+		strcat( string, itoa( *(ptrlcb->PtrVar), (char*)valuestring, 10 ) ) ;
 	}
 
 	nbaffcar = ((ptrlcb->X2-3)-(ptrlcb->X1+3))/SizeCar ;
@@ -458,7 +461,7 @@ T_CLICK_BOX	*AddHeaderButton(	T_MENU *ptrmenu,
 	if( Mshrink( ptrmenu->PtrMallocList, newsize ) == 0L )
 	{
 		ptr = (UBYTE*)ptrmenu->PtrMallocList ;
-		ptrmenu->PtrMallocList = Malloc( newsize ) ;
+		ptrmenu->PtrMallocList = (T_CLICK_BOX*)Malloc( newsize ) ;
 		memmove( ptrmenu->PtrMallocList, ptr, newsize-sizeof(T_CLICK_BOX) ) ;
 		Free( ptr ) ;
 	}
@@ -554,7 +557,8 @@ void	AddChangeValue(	T_MENU	*ptrmenu,
 
 	ptrlcb->Handle = handle ;
 	ptrlcb->Flags = FLAG_CENTRE | flags ;
-	ptrlcb->PtrString = "-" ;
+	// TODO: Dodgy cast
+	ptrlcb->PtrString = (unsigned char*)"-" ;
 	ptrlcb->Type = TYPE_DEC_VALUE ;
 	ptrlcb->PtrVar = ptrvar ;
 	ptrlcb->Mask = minvar ;
@@ -564,7 +568,8 @@ void	AddChangeValue(	T_MENU	*ptrmenu,
 
 	ptrlcb->Handle = handle ;
 	ptrlcb->Flags = FLAG_CENTRE | flags ;
-	ptrlcb->PtrString = "+" ;
+	// TODO: Dodgy cast
+	ptrlcb->PtrString = (unsigned char*)"+" ;
 	ptrlcb->Type = TYPE_INC_VALUE ;
 	ptrlcb->PtrVar = ptrvar ;
 	ptrlcb->Mask = maxvar ;
@@ -628,7 +633,8 @@ void	AddWindow(	T_MENU	*ptrmenu,
 
 	ptrlcb->Handle = handle ;
 	ptrlcb->Flags = flags ;
-	ptrlcb->PtrString = "" ;
+	// TODO: Dodgy cast
+	ptrlcb->PtrString = (unsigned char*)"" ;
 	ptrlcb->Type = TYPE_WINDOW ;
 }
 
@@ -996,9 +1002,9 @@ LONG	GereMenu( T_MENU *ptrmenu )
 					}
 					else		/* input value */
 					{
-						memostring = ptrlcb->PtrString ;
+						memostring = (char*)ptrlcb->PtrString ;
 						itoa( value, InputValueString, 10 ) ;
-						ptrlcb->PtrString = InputValueString ;
+						ptrlcb->PtrString = (unsigned char*)InputValueString ;
 						ptrlcb->Type = TYPE_TEXT ;
 						DrawBox( ptrmenu, select, FLAG_PUSHED, TRUE ) ;
 						InputString( ptrmenu, ptrlcb->Handle , 63 ) ;
@@ -1007,7 +1013,7 @@ LONG	GereMenu( T_MENU *ptrmenu )
 						if( ivalue > vmax ) ivalue = vmax ;
 						*(ptrlcb->PtrVar) = ivalue ;
 						ptrlcb->Type = TYPE_CHANGE_VALUE ;
-						ptrlcb->PtrString = memostring ;
+						ptrlcb->PtrString = (unsigned char*)memostring ;
 					}
 					DrawBox( ptrmenu, select, NO_FLAG, TRUE ) ;
 					break ;
