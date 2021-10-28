@@ -25,14 +25,14 @@ LONG	MixerInitDLL(char *driverpathname)
    // Load driver file
    //
 
-	dll = FILE_read( driverpathname, NULL);
+	dll = (char*)FILE_read( (signed char*)driverpathname, NULL);
 	if (dll==NULL)
 	{
 		printf("%s Could not load driver '%s'.\n", MixerError, driverpathname );
 		return FALSE ;
 	}
 
-	drvr=DLL_load(dll,DLLMEM_ALLOC | DLLSRC_MEM,NULL);
+	drvr=(char*)DLL_load(dll,DLLMEM_ALLOC | DLLSRC_MEM,NULL);
 	if (drvr==NULL)
 	{
 		printf("%s Invalid DLL image.\n", MixerError );
