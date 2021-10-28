@@ -13,6 +13,7 @@ U32     MakeMask(U32 val);
 //***************************************************************************
 U32     ScanInput(U32 **ptrinput, U32 *maskinput)
 {
+#ifdef DOS
         U32     mask, mask0, mask1      ;
         U32     i                       ;
         U32     *ptr                    ;
@@ -42,7 +43,7 @@ exit:
 	// result
 	*ptrinput       = ptr           ;
 	*maskinput      = MakeMask(mask);
-
+#endif
 	// Ok
 	return TRUE ;
 }
@@ -58,14 +59,17 @@ static	U32	*InputMasks	;
 //***************************************************************************
 void	DefineInput(S32	nbkeymasks, U32 *keys, U32 *inputmasks)
 {
+#ifdef DOS
 	NbInputKeys 	= nbkeys	;
 	KeyMasks	= keymasks	;
 	InputMasks	= inputmasks	;
+#endif
 }
 
 //***************************************************************************
 void    GetInput()
 {
+#ifdef DOS
 	S32     i	;
 
 	// reset Input
@@ -76,6 +80,7 @@ void    GetInput()
         {
                 if(CheckKey(InputKeys[i]))	Input |= InputMasks[i]	;
         }
+#endif
 }
 
 //***************************************************************************

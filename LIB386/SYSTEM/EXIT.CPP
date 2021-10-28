@@ -52,6 +52,7 @@ void	ClearAll()
 //----------------------------------------------------------------------------
 void	InitAll()
 {
+#ifdef DOS
 	char		path2[_MAX_PATH]	;
 	S32		i			;
 	unsigned	dummy			;
@@ -96,17 +97,22 @@ void	InitAll()
 	chdir(path2)			;
 	_dos_setdrive((char)(toupper(Path1[0])-'A'+1), &dummy)	;
 	chdir(Path1)			;
+#endif
 }
 
 //----------------------------------------------------------------------------
 S32	AdelineSystem(char *command)
 {
+#ifdef DOS
 	S32		ret		;
 
 	ClearAll()			;
 	ret = system(command)		;
 	InitAll()			;
 	return ret			;
+#else
+	return 0;
+#endif
 }
 
 //----------------------------------------------------------------------------

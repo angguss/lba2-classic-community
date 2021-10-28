@@ -21,13 +21,13 @@ enum {
 
 typedef struct {
 	void	**AdrPtr ;
-	S32	Size ;
+	signed int	Size ;
 	} T_MEM ;
 
 extern	T_MEM	ListMem[] ;
 
-extern	S32	SizeOfMemAllocated 	;	// calcul‚e dynamiquement
-extern	U8	*MainBuffer		;
+extern	signed int	SizeOfMemAllocated 	;	// calcul‚e dynamiquement
+extern	unsigned char	*MainBuffer		;
 
 extern	void	AdjustLba2Mem( void ) ;
 extern	void   	InitMainBuffer( void ) ;

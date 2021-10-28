@@ -184,7 +184,7 @@
 #include	<conio.h>
 #include	<stdio.h>
 #include	<ctype.h>
-#include	<i86.h>
+//#include	<i86.h>
 #include	<process.h>
 #include	<limits.h>
 #include	<direct.h>
@@ -510,7 +510,7 @@ typedef	struct
 
 #ifndef	EDITLBA2
 
-#include	"F:\PROJET\LBA2\TOOLS\PERSO\3DEXT\EXTERN.H"
+//#include	"F:\PROJET\LBA2\TOOLS\PERSO\3DEXT\EXTERN.H"
 #include	"PTRFUNC.H"
 //#include	"OLDSORT.H"
 #include	"SORT.H"

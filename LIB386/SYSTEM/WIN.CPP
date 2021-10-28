@@ -1,12 +1,14 @@
-#include "adeline.h"
-#include "lib_sys.h"
-#include "f:\projet\lib386\lib_svg4\lib_svga.h"
-#include "f:\projet\lib386\lib_ail4\lib_ail.h"
+#include <system\adeline.h>
+#include "..\lib_sys\lib_sys.h"
+#include "..\lib_svga\lib_svga.h"
+//#include "..\lib_ail\lib_ail.h"
 
 #include <windows.h>
 #include <windowsx.h>
 #include <mmsystem.h>
 #include <ddraw.h>
+#include <stdio.h>
+#include <SVGA/DDRAW.H>
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
@@ -42,7 +44,8 @@ extern S32	_LibMouseCenterX, _LibMouseCenterY	;
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-
+// TODO: Missing?
+static S32 WinMode = TRUE;
 static S32	AllowWinMode		= TRUE		;
 static S32	LiveWin			= TRUE		;
 
@@ -64,6 +67,11 @@ static S32	AttachedBack		= FALSE		;
 
 void			(*PauseMiles)()		= NULL	;
 void			(*ResumeMiles)()	= NULL	;
+// TODO: Stubbed
+void			(*RedrawFunc)() = NULL;
+void			(*ModeCallback)(int, int, int) = NULL;
+void			(*ModeSelect)(S32*, S32*) = NULL;
+extern const char* AppName;
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Windows
@@ -80,7 +88,7 @@ static POINT			Pt			;
 static char		ErrorStr[256]			;
 static S32		ScreenLocked = 0		;
 
-HANDLE 			hInstance		;
+HINSTANCE 			hInstance		;
 HWND			hWnd			;
 HDC			DisplayContext		;
 
@@ -98,8 +106,8 @@ U32			AppInitialized	= FALSE	;
 //Screen
 
 U32			TabOffLine[480]	;
-S32			Screen_X	;
-S32			Screen_Y	;
+signed int	Screen_X	;
+signed int	Screen_Y	;
 U8			*Log		;
 U8			*MemoLog	;
 U8			*Phys		;
@@ -115,25 +123,25 @@ static S32		LastTime	= 0	;
 static S32		MemoTime	= 0	;
 static S32		LastEvaluate	= 0	;
 
-U32			TimerSystemHR	= 0	;
-U32			TimerRefHR	= 0	;
-U32			TimerRef	= 0	;
-U32			NbFramePerSecond= 0	;
-U32			CmptFrame	= 0	;
+ULONG		TimerSystemHR	= 0	;
+ULONG		TimerRefHR	= 0	;
+//ULONG		TimerRef	= 0	;
+UWORD		NbFramePerSecond= 0	;
+UWORD		CmptFrame	= 0	;
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Keyboard
 
 #define	BUFFER_SIZE	20
 
-U32			AsciiMode = FALSE	;
+WORD			AsciiMode = FALSE	;
 U32			BufferKey[BUFFER_SIZE]	;
 U32			StartKey = 0		;
 U32			EndKey = 0		;
 U32			NextEndKey		;
 HANDLE			AsciiMutex		;
 
-U32			Key, Joy, Fire, FuncKey	;
+extern volatile UWORD			Key, Joy, Fire, FuncKey	;
 
 static U32		TabSpecialKey[]=
 			{
@@ -221,6 +229,15 @@ static U16		TabSpecialFunc[] =
                                 2, 2048
 			};
 
+// TODO: Organise missing prototypes
+S32	SetMode(S32 width, S32 height, S32 winmode);
+void ReleaseObjects();
+void UnlockTimer();
+void LockTimer();
+void ManageEvents();
+void ManageTime();
+
+
 void	SpecialKey(S32 key, S32 *type, S32 *bits);
 
 #pragma aux SpecialKey=						\
@@ -243,26 +260,26 @@ void	SpecialKey(S32 key, S32 *type, S32 *bits);
 		modify exact [ecx edx edi]
 
 //----------------------------------------------------------------------------
-U32	GetAscii()
-{
-	U32	ret = 0	;
-
-
-	WaitForSingleObject(AsciiMutex, INFINITE);
-
-	if(EndKey != StartKey)
-	{
-		ret = BufferKey[StartKey++];
-		if(StartKey == BUFFER_SIZE)
-		{
-			StartKey = 0 ;
-		}
-	}
-
-        ReleaseMutex(AsciiMutex);
-
-	return ret ;
-}
+//U32	GetAscii()
+//{
+//	U32	ret = 0	;
+//
+//
+//	WaitForSingleObject(AsciiMutex, INFINITE);
+//
+//	if(EndKey != StartKey)
+//	{
+//		ret = BufferKey[StartKey++];
+//		if(StartKey == BUFFER_SIZE)
+//		{
+//			StartKey = 0 ;
+//		}
+//	}
+//
+//        ReleaseMutex(AsciiMutex);
+//
+//	return ret ;
+//}
 
 //----------------------------------------------------------------------------
 
@@ -804,7 +821,7 @@ retry:
 
 //----------------------------------------------------------------------------
 
-S32	RestoreObjects()
+S32	RestoreObjects2()
 {
    	HRESULT         ddrval	;
 
@@ -1085,7 +1102,8 @@ HRESULT CALLBACK WinModeCallback(LPDDSURFACEDESC pdds, LPVOID lParam)
 {
 	if(pdds->ddpfPixelFormat.dwRGBBitCount == 8)
 	{
-		(*ModeCallback)(pdds->dwWidth, pdds->dwHeight, pdds->ddsCaps.dwCaps);
+		// TODO: Reimplement
+		//(*ModeCallback)(pdds->dwWidth, pdds->dwHeight, pdds->ddsCaps.dwCaps);
 	}
 
 	return DDENUMRET_OK	;
@@ -1093,7 +1111,7 @@ HRESULT CALLBACK WinModeCallback(LPDDSURFACEDESC pdds, LPVOID lParam)
 
 //----------------------------------------------------------------------------
 
-BOOL InitWindow( HANDLE hinstance, int nCmdShow, char *title )
+BOOL InitWindow( HINSTANCE hinstance, int nCmdShow, char *title )
 {
 	S32		width, height 	;
 	S32		i, j		;
@@ -1161,7 +1179,7 @@ BOOL InitWindow( HANDLE hinstance, int nCmdShow, char *title )
    	wc.cbWndExtra	= 0				;
    	wc.hInstance	= hInstance			;
    	wc.hIcon	= LoadIcon( hInstance, "APLI_ICON" );
-   	wc.hIconSm 	= LoadImage( hInstance,
+   	wc.hIconSm 	= (HICON)LoadImage( hInstance,
    				"APLI_ICON",
    				IMAGE_ICON,
 		        	GetSystemMetrics(SM_CXSMICON),
@@ -1412,7 +1430,7 @@ void	LockScreen()
 	            }
 	            if( ddrval == DDERR_SURFACELOST )
 	            {
-			RestoreObjects();
+			RestoreObjects2();
 			continue;
 	            }
 	            if( ddrval != DDERR_WASSTILLDRAWING )
@@ -1479,7 +1497,7 @@ void	FlipScreen()
 	            }
 	            if( ddrval == DDERR_SURFACELOST )
 	            {
-			RestoreObjects()	;
+			RestoreObjects2()	;
 			if(Redraw&&RedrawFunc)
 			{
 				Redraw = FALSE	;
@@ -1507,7 +1525,7 @@ void	FlipScreen()
 	            }
 	            if( ddrval == DDERR_SURFACELOST )
 	            {
-			RestoreObjects();
+			RestoreObjects2();
 			continue;
 	            }
 	            if( ddrval != DDERR_WASSTILLDRAWING )
