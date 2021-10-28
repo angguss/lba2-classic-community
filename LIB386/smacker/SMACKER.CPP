@@ -2,7 +2,9 @@
 #include	<system\logprint.h>
 
 #ifdef	_WIN32
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<ail\mss.h>
 #endif
@@ -11,7 +13,12 @@
 
 #include	<system.h>
 
+#ifdef HAS_RAD_TOOLS
 #include	<smacker\smack.h>
+#else
+#define RCFUNC 
+#define RADLINK
+#endif
 #include	<smacker\smacker.h>
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -199,6 +206,7 @@ void	SmackResetMemory()
 
 void	InitSmacker()
 {
+#ifdef HAS_RAD_TOOLS
 	SmackSoundUseMSS(DigDriver);
 
 	if(DigDriver)
@@ -209,6 +217,9 @@ void	InitSmacker()
 	{
 		LogPuts("No Digital Sound Driver. Smacker will not playback soundtracks.");
 	}
+#else
+
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

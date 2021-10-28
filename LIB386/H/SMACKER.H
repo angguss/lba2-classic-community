@@ -30,7 +30,7 @@
 #endif//_BUILDING_LIB
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
-#include	<SMACKER\SMACK.H>
+//#include	<SMACKER\SMACK.H>
 #include	<SMACKER\SMACKER.H>
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
