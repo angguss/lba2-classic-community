@@ -17,9 +17,9 @@
 #include <string.h>
 #include <conio.h>
 
-#include "f:\projet\lib386\lib_sys\adeline.h"
-#include "f:\projet\lib386\lib_sys\lib_sys.h"
-#include "f:\projet\lib386\lib_midi\lib_midi.h"
+#include "..\lib_sys\adeline.h"
+#include "..\lib_sys\lib_sys.h"
+#include "..\lib_midi\lib_midi.h"
 
 /***************************************************************/
 
@@ -152,6 +152,7 @@ void *load_global_timbre(unsigned short bank, unsigned short patch)
 
 LONG	InitMidiDLL( char *driverpathname )
 {
+#ifdef HAS_RAD_TOOLS
 	char	*str;
 
    //
@@ -226,12 +227,17 @@ LONG	InitMidiDLL( char *driverpathname )
 	printf("\nCopyright (C) 1991,1992 Miles Design, Inc.\n\n");
 
 	return TRUE ;
+#else
+	// TODO: Implement
+	return TRUE;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 LONG	InitMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	char	GTL_filename[_MAX_PATH];
 
    // use if defined new parameters
@@ -293,6 +299,10 @@ LONG	InitMidi()
 	Load( GTL_filename, ptrGTL );
 
 	return TRUE ;
+#else
+	// TODO: Implement
+	return TRUE;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -303,23 +313,28 @@ void	InitPathMidiSampleFile( UBYTE *path )
 // Get name of Global Timbre Library file by appending suffix
 // supplied by XMIDI driver to GTL filename prefix "SAMPLE."
 //
-	strcpy(MidiPath, path ) ;
+	strcpy(MidiPath, (const char*)path ) ;
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ClearMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enable ) 	return ;
 
 	AIL_shutdown( "" );
 	hseq = -1 ;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PlayMidi( /*char *filename*/ UBYTE *ail_buffer )
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enable ) 	return ;
 
    //
@@ -382,80 +397,113 @@ void	PlayMidi( /*char *filename*/ UBYTE *ail_buffer )
       seqnum,argv[1]);	*/
 
 	AIL_start_sequence(hdriver,hseq) ;
+#else
+	// TODO: Implement
+	return;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	StopMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		AIL_stop_sequence(hdriver,hseq) ;
 		AIL_release_sequence_handle( hdriver, hseq ) ;
 		hseq = -1 ;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 LONG	IsMidiPlaying()
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		if( AIL_sequence_status( hdriver, hseq ) == 1 )
 			return TRUE ;
 	}
 	return FALSE ;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	FadeMidiDown( WORD nbsec )
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		AIL_set_relative_volume(hdriver, 0, 0, 1000 * nbsec ) ;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	FadeMidiUp( WORD nbsec )
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		AIL_set_relative_volume(hdriver, 0, MaxVolume, 1000 * nbsec ) ;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	WaitFadeMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		while( AIL_relative_volume( hdriver, 0 ) != 0 ) ;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	VolumeMidi( WORD volume )
 {
+#ifdef HAS_RAD_TOOLS
 	if( hseq != -1 )
 	{
 		AIL_set_relative_volume(hdriver, 0, (volume*MaxVolume)/100, 0 ) ;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	DoLoopMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	// loop track
 
 	if( hseq != -1 )
 		if( AIL_sequence_status( hdriver, 0 ) == 2 ) // seg done
 			AIL_start_sequence(hdriver,hseq) ;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

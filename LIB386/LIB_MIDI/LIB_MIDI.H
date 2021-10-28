@@ -13,6 +13,12 @@ extern	WORD	Midi_Driver_Enable ;
 
 extern	char GTL_filename[_MAX_PATH] ;		// fichier des sons
 
+#ifndef HAS_RAD_TOOLS
+#define HDRIVER int
+#define HSEQUENCE int
+#define drvr_desc int
+#endif
+
 extern void AskMidiVars(char ***,long **);
 extern long InitMidiDLL(char *);
 extern long InitMidi(void);
