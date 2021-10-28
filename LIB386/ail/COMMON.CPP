@@ -6,10 +6,13 @@
 #include	<stdlib.h>
 
 #ifdef	_WIN32
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<ail\mss.h>
 #endif
+
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 HMDIDRIVER	MdiDriver		= NULL		;// Handle to midi driver

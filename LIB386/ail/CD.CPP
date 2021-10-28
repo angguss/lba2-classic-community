@@ -9,12 +9,18 @@
 #include 	<stdlib.h>
 
 #ifdef	_WIN32
+// TODO: Implement alternative
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<ail\mss.h>
 #endif
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
+
+// TODO: Temporary to fix compiling
+#define HREDBOOK int
 
 static	HREDBOOK	Cd		;
 static	U32		Tracks		;
@@ -29,15 +35,22 @@ static	S32		OldVolumeCD	;
 
 static	S32	CheckCD()
 {
+#ifdef HAS_RAD_TOOLS
 	if(!Cd)	return	FALSE	;
 
 	return(AIL_redbook_status(Cd) != REDBOOK_ERROR) ;
+#else
+	// TODO: Implement
+	return 0;
+#endif
+
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 char	OpenCD(char *volume_name)
 {
+#ifdef HAS_RAD_TOOLS
 	char	drive	;
 
 	for(drive='A'; drive<='Z'; drive++)
@@ -121,12 +134,17 @@ error:
 	{
 		return 0		;
 	}
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	CloseCD()
 {
+#ifdef HAS_RAD_TOOLS
 	if(!Cd)		return	;
 
 	StopCD()		;
@@ -138,12 +156,17 @@ void	CloseCD()
 	AIL_redbook_close(Cd)	;
 
 	Cd = NULL		;
+#else
+	// TODO: Implement
+	return;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PlayCD(S32 track)
 {
+#ifdef HAS_RAD_TOOLS
 	U32	start, end	;
 
 	if(!CheckCD() || !track || (track>Tracks))	return	;
@@ -154,12 +177,17 @@ void	PlayCD(S32 track)
 
 	AIL_redbook_play(Cd, start, end);
 	Track = track		;
+#else
+	// TODO: Implement
+	return;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ChangeVolumeCD(S32 volume)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !CheckCD() )	return ;
 
 	if(volume>127)
@@ -172,53 +200,75 @@ void	ChangeVolumeCD(S32 volume)
 	}
 
 	AIL_redbook_set_volume(Cd, volume)	;
+#else
+	// TODO: Implement
+	return;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	GetVolumeCD()
 {
+#ifdef HAS_RAD_TOOLS
 	return	AIL_redbook_volume(Cd)	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	StopCD()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !CheckCD() || !Track)	return 	;
 
 	AIL_redbook_stop(Cd)	;
 	Track = 0		;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PauseCD()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !CheckCD() || !Track || !IsCDPlaying())	return	;
 
 	AIL_redbook_track_info(Cd, Track, NULL, &End);
 	Cur = AIL_redbook_position(Cd)	;
 	PausedTrack = Track		;
 
-	StopCD()			;
+	StopCD();
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ResumeCD()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !CheckCD() || !PausedTrack)	return	;
 
 	AIL_redbook_play(Cd, Cur, End)	;
 	Track = PausedTrack		;
 	PausedTrack = 0			;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	IsCDPlaying()
 {
+#ifdef HAS_RAD_TOOLS
 	S32	playing	;
 
 	if( !CheckCD() || !Track)	return FALSE ;
@@ -237,6 +287,10 @@ S32	IsCDPlaying()
 
 
 	return	playing		;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

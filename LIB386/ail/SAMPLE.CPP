@@ -10,7 +10,9 @@
 #include 	"mixer.h"
 #include	<system\winsys.h>
 #include	<system\timerwin.h>
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<system\timerdos.h>
 #include	<ail\mss.h>
@@ -97,6 +99,7 @@ VOID_FUNC	SpecialInitSampleDriver	;
 
 S32	InitDriver(S32 rate, S32 bits, S32 chans)
 {
+#ifdef HAS_RAD_TOOLS
 	static	PCMWAVEFORMAT	sPCMWF	;
 	S32			res	;
 
@@ -115,6 +118,9 @@ S32	InitDriver(S32 rate, S32 bits, S32 chans)
 	}
 
 	return res	;
+#else
+	return 0;
+#endif
 }
 
 #endif
@@ -123,6 +129,7 @@ S32	InitDriver(S32 rate, S32 bits, S32 chans)
 
 S32	InitSampleDriver( char *driver_name )
 {
+#ifdef HAS_RAD_TOOLS
 	if( Sample_Driver_Enabled )
 	{
 		return TRUE	;
@@ -264,7 +271,9 @@ retry:
 	        ResumeSamplesPtr= ResumeSamples	;
 	}
 #endif
-
+#else
+	// TODO: Implement
+#endif
 	return TRUE	;
 }
 
@@ -327,6 +336,7 @@ static S32 GetHandleIndice(U32 sample)
 
 static HSAMPLE FindFreeHandle(U32 *pnum)
 {
+#ifdef HAS_RAD_TOOLS
 	HSAMPLE		handle	;
 	U32		hnum	;
 
@@ -404,6 +414,9 @@ ok:
 	Sample_Handle[hnum].timer = TimerSystemHR;
 
 	return	handle 	;
+#else
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -430,6 +443,7 @@ static U32 GenerateSampleHandle(U32 usernum, U32 hnum)
 
 static void ScaleVolumeSamples( S32 fadevol )
 {
+#ifdef HAS_RAD_TOOLS
 	U32	hnum	;
 
 	// update all the volumes
@@ -442,6 +456,9 @@ static void ScaleVolumeSamples( S32 fadevol )
 		volume = AIL_sample_user_data( handle, USER_DATA_VOLUME);
 		AIL_set_sample_volume( handle, Scale(volume, fadevol, 7));
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 
@@ -598,6 +615,7 @@ void	InverseStereoSample( S32 inverse )
 
 U32	PlaySample(void *ptrsample, U32 usernum, S32 pitchbend, S32 nbrepeat, S32 volume, S32 pan)
 {
+#ifdef HAS_RAD_TOOLS
 	HSAMPLE		handle	;
 	U32		hnum	;
 
@@ -646,6 +664,10 @@ U32	PlaySample(void *ptrsample, U32 usernum, S32 pitchbend, S32 nbrepeat, S32 vo
 
 	// Compute handle
 	return GenerateSampleHandle(usernum, hnum);
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -669,6 +691,7 @@ SampleCallBack(U32 user)
 
 U32	TimerPlaySample(void *ptrsample, U32 usernum, S32 pitchbend, S32 nbrepeat, S32 volume, S32 pan, S32 period)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Sample_Driver_Enabled )	return	FALSE	;
 
 	if(!HandleTimer)
@@ -698,23 +721,32 @@ U32	TimerPlaySample(void *ptrsample, U32 usernum, S32 pitchbend, S32 nbrepeat, S
 	AIL_set_timer_period( HandleTimer, period*1000 ) ;
 	AIL_start_timer( HandleTimer ) 	;
 	return TRUE			;
+#else
+	// TODO: Implement
+	return FALSE;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	TimerStopSample()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Sample_Driver_Enabled )	return	;
 
 	if(HandleTimer)
 	{
 		AIL_stop_timer( HandleTimer ) 	;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 void	ChangePitchbendSample( U32 sample, S32 pitchbend)
 {
+#ifdef HAS_RAD_TOOLS
 	HSAMPLE	handle	;
 	S32	hnum	;
 
@@ -742,12 +774,16 @@ void	ChangePitchbendSample( U32 sample, S32 pitchbend)
 
 		AIL_set_sample_user_data( handle, USER_DATA_PITCHBEND, pitchbend);
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ChangeVolumePanSample( U32 sample, S32 volume, S32 pan)
 {
+#ifdef HAS_RAD_TOOLS
 	HSAMPLE	handle	;
 	S32	hnum	;
 
@@ -779,6 +815,9 @@ void	ChangeVolumePanSample( U32 sample, S32 volume, S32 pan)
 	if(pan>127)		pan = 127	;
 	else if(pan<0)		pan = 0		;
 	AIL_set_sample_pan( handle, pan^InversePanMask);
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -803,6 +842,7 @@ HSAMPLE	GetSampleMSSHandle( U32 sample )
 
 void	StopOneSample( U32 sample )
 {
+#ifdef HAS_RAD_TOOLS
 	HSAMPLE	handle	;
 	S32	hnum	;
 
@@ -818,12 +858,16 @@ void	StopOneSample( U32 sample )
 	handle = Sample_Handle[hnum].handle		;
 	AIL_end_sample(handle)				;
 	Sample_Handle[hnum].sample = 0			;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	StopSamples()
 {
+#ifdef HAS_RAD_TOOLS
 	U32		hnum	;
 
 	if( !Sample_Driver_Enabled )	return	;
@@ -844,12 +888,16 @@ void	StopSamples()
 	// Reset seed to 0x100 to limit risks of overflow
 	SampleSeed = 0x1000000	;
 	SamplesPaused = 0	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PauseOneSample( U32 sample )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled )	return	;
@@ -862,12 +910,16 @@ void	PauseOneSample( U32 sample )
 
 	// stop the sample
 	AIL_stop_sample(Sample_Handle[hnum].handle)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ResumeOneSample( U32 sample )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled )	return	;
@@ -880,12 +932,16 @@ void	ResumeOneSample( U32 sample )
 
 	// stop the sample
 	AIL_resume_sample(Sample_Handle[hnum].handle)	;
+#else
+// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PauseSamples()
 {
+#ifdef HAS_RAD_TOOLS
 	U32		hnum	;
 
 	if( !Sample_Driver_Enabled )	return	;
@@ -902,12 +958,16 @@ void	PauseSamples()
 	{
 		AIL_stop_sample(Sample_Handle[hnum].handle)	;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ResumeSamples()
 {
+#ifdef HAS_RAD_TOOLS
 	U32		hnum	;
 
 	if( !Sample_Driver_Enabled )	return	;
@@ -929,12 +989,16 @@ void	ResumeSamples()
 	{
 		AIL_resume_sample(Sample_Handle[hnum].handle)	;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 U32	IsSamplePlaying( U32 sample )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled )
@@ -950,12 +1014,17 @@ U32	IsSamplePlaying( U32 sample )
 	return	AIL_sample_status(Sample_Handle[hnum].handle) == SMP_DONE ?
 		FALSE				:
 		Sample_Handle[hnum].timer	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	GetSamplePosition( U32 sample )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled )
@@ -969,13 +1038,17 @@ S32	GetSamplePosition( U32 sample )
 
 	// get sample pos
 	return(AIL_sample_position(Sample_Handle[hnum].handle))	;
-
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	GetPlayingSamples(SAMPLE_PLAYING tab[], S32 max)
 {
+#ifdef HAS_RAD_TOOLS
 	S32	i, hnum	;
 
 	hnum = 0	;
@@ -1006,12 +1079,17 @@ S32	GetPlayingSamples(SAMPLE_PLAYING tab[], S32 max)
 	}
 
 	return	hnum	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	GetSamplePoly()
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum, count	;
 
 	if( !Sample_Driver_Enabled )
@@ -1030,12 +1108,17 @@ S32	GetSamplePoly()
 	}
 
 	return count	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	SetDataSample( U32 sample, S32 index, S32 value )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled || (index>8-USER_DATA_USER))
@@ -1049,12 +1132,16 @@ void	SetDataSample( U32 sample, S32 index, S32 value )
 
 	// set data
 	AIL_set_sample_user_data(Sample_Handle[hnum].handle, USER_DATA_USER+index, value)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 S32	GetDataSample( U32 sample, S32 index )
 {
+#ifdef HAS_RAD_TOOLS
 	S32	hnum	;
 
 	if( !Sample_Driver_Enabled || (index>8-USER_DATA_USER))
@@ -1068,6 +1155,10 @@ S32	GetDataSample( U32 sample, S32 index )
 
 	// get data
 	return(AIL_sample_user_data(Sample_Handle[hnum].handle, USER_DATA_USER+index))	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

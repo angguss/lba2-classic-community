@@ -11,7 +11,10 @@
 
 #ifdef	_WIN32
 #include	<system\winsys.h>
+// TODO: Reimplement
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<ail\mss.h>
 #endif
@@ -93,6 +96,8 @@ VOID_FUNC	SpecialInitMidiDriver	;
 
 S32	InitMidiDriver( char *driver_name )
 {
+#ifdef HAS_RAD_TOOLS
+
 #ifndef	_WIN32
 	S32	type ;
 #endif
@@ -219,7 +224,9 @@ S32	InitMidiDriver( char *driver_name )
 	        ResumeMiles	= ResumeMidi	;
 	}
 #endif
-
+#else
+	// TODO: Implement
+#endif
 	return TRUE		;
 }
 
@@ -250,6 +257,7 @@ static void pascal
 #endif
 TriggerCallBack(HSEQUENCE handle, S32 channel, S32 value)
 {
+#ifdef HAS_RAD_TOOLS
 	// Dummy code to avoid warnings (doesn't actually generate code)
 	handle	= handle	;
 	channel = channel	;
@@ -286,6 +294,9 @@ TriggerCallBack(HSEQUENCE handle, S32 channel, S32 value)
 
 	// branch to right index
 	AIL_branch_index(Midi_Handle, BlockPlaying)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -297,6 +308,7 @@ static void pascal
 #endif
 SequenceCallBack(HSEQUENCE handle)
 {
+#ifdef HAS_RAD_TOOLS
 	// Dummy code to avoid warnings (doesn't actually generate code)
 	handle	= handle	;
 
@@ -314,12 +326,16 @@ SequenceCallBack(HSEQUENCE handle)
 
 	// process next block in sequence
 	TriggerCallBack(0, 0, BlockPlaying);
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ResetMidi()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )		return	;
 
 	// If already doing reset then exit
@@ -343,12 +359,16 @@ void	ResetMidi()
 	WaitReset = TRUE				;
 
 	AIL_start_sequence(Midi_Handle)			;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 U32	PrepareMidi( void *ptrxmi, S32 seq_num, S32 volume)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return FALSE ;
 
 	// Reset controllers
@@ -380,6 +400,10 @@ U32	PrepareMidi( void *ptrxmi, S32 seq_num, S32 volume)
 	AIL_start_sequence(Midi_Handle)	;
 
 	return TRUE			;
+#else
+	// TODO: Implement
+	return TRUE;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -391,14 +415,18 @@ void	ClearMidi()
 	Read_Seq       	= 0		;
 	BlockPlaying	= -1		;
 	MidiPaused	= 0		;
-
+#ifdef HAS_RAD_TOOLS
 	AIL_end_sequence(Midi_Handle)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PlayBlockMidi(S32 block_num)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return 	;
 
 	// Stop Midi
@@ -413,6 +441,9 @@ void	PlayBlockMidi(S32 block_num)
 
 	// Go
 	AIL_resume_sequence(Midi_Handle)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -454,10 +485,14 @@ void	ChainBlockMidi(S32 block_num)
 
 void	ChangeVolumeMidi(LONG volume, S32 delay)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return	;
 
 	// Volume
 	AIL_set_sequence_volume( Midi_Handle, volume, delay)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -475,6 +510,7 @@ void	StopChainMidi()
 
 void	StopMidi( )
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return	;
 
 	// Nothing playing
@@ -488,12 +524,16 @@ void	StopMidi( )
 
 	// Stop PlayBack
 	AIL_stop_sequence(Midi_Handle)	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PauseMidi( )
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return	;
 
 	if(!MidiPaused)
@@ -510,12 +550,16 @@ void	PauseMidi( )
 		AIL_stop_sequence(Midi_Handle)	;
 	}
 	MidiPaused++	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ResumeMidi( )
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Midi_Driver_Enabled )	return	;
 
 	if(MidiPaused)
@@ -528,6 +572,9 @@ void	ResumeMidi( )
 			AIL_resume_sequence(Midi_Handle);
 		}
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

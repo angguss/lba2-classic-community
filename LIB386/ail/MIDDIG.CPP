@@ -1,7 +1,9 @@
 #include	<system\adeline.h>
 
 #ifdef	_WIN32
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<ail\mss.h>
 #endif
@@ -26,6 +28,7 @@ static	S32		SizeLib		= 0		;
 
 void	InitSampleSynthesizer( void *wavelib, S32 sizelib, S32 voices )
 {
+#ifdef HAS_RAD_TOOLS
 	if((!Midi_Driver_Enabled)||(!Sample_Driver_Enabled))	return	;
 
 	if(WaveLib)
@@ -41,12 +44,16 @@ void	InitSampleSynthesizer( void *wavelib, S32 sizelib, S32 voices )
 	WaveSynthesizer = AIL_create_wave_synthesizer(DigDriver, MdiDriver, wavelib, voices );
 	WaveLib		= wavelib	;
 	SizeLib		= sizelib	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	ClearSampleSynthesizer()
 {
+#ifdef HAS_RAD_TOOLS
 	if((!Midi_Driver_Enabled)||(!Sample_Driver_Enabled))	return	;
 
 	if( !WaveLib )	return	;
@@ -56,6 +63,9 @@ void	ClearSampleSynthesizer()
 
 	WaveLib	= NULL	;
 	SizeLib	= 0	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл

@@ -2,7 +2,9 @@
 
 #ifdef	_WIN32
 #include	<system\winsys.h>
+#ifdef HAS_RAD_TOOLS
 #include	<ail\mssw.h>
+#endif
 #else
 #include	<system\dossys.h>
 #include	<ail\mss.h>
@@ -44,6 +46,7 @@ static	VOID_FUNC	ManageStream		;
 
 static void	ManageStream()
 {
+#ifdef HAS_RAD_TOOLS
 	if( Sample_Driver_Enabled && Stream )
 	{
 		AIL_service_stream(Stream, 0)	;
@@ -53,12 +56,16 @@ static void	ManageStream()
 	{
 		StreamManageProc()	;
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 static void PlayThisStream(char *name, S32 pos)
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Sample_Driver_Enabled )	return	;
 
 	StopStream()	;
@@ -80,6 +87,9 @@ static void PlayThisStream(char *name, S32 pos)
 	AIL_start_stream(Stream)		;
 
 	ManageStream()				;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -107,6 +117,7 @@ void	PlayStream(char *name)
 
 void	ChangeVolumeStream(S32 volume)
 {
+#ifdef HAS_RAD_TOOLS
 	if(volume>127)
 	{
 		volume = 127	;
@@ -125,6 +136,9 @@ void	ChangeVolumeStream(S32 volume)
 			UseWaveMixer?StreamVolume:
 #endif//_WIN32
 			Scale(StreamVolume, LibWaveMasterVolume, 7));
+#else
+	// TODO: Implement
+#endif
 
 }
 
@@ -139,18 +153,23 @@ S32	GetVolumeStream()
 
 void	StopStream()
 {
+#ifdef HAS_RAD_TOOLS
 	if( !Sample_Driver_Enabled || !Stream )	return ;
 
 	AIL_close_stream(Stream)	;
 
 	Stream = NULL		;
 	StreamPathName[0] = 0	;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
 
 void	PauseStream()
 {
+#ifdef HAS_RAD_TOOLS
 	if(!IsStreamPlaying())		return	;
 
 	AIL_pause_stream(Stream, TRUE)		;
@@ -161,6 +180,9 @@ void	PauseStream()
 	strcpy(PausedPathName, StreamPathName)	;
 
 	StopStream()				;
+#else
+	// TODO: Implement
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
@@ -178,6 +200,7 @@ void	ResumeStream()
 
 S32	IsStreamPlaying()
 {
+#ifdef HAS_RAD_TOOLS
 	S32	playing	;
 
 	if( !Sample_Driver_Enabled || !Stream )	return FALSE ;
@@ -189,6 +212,10 @@ S32	IsStreamPlaying()
 	if(!playing)	StopStream()	;
 
 	return	playing	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //лллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллллл
