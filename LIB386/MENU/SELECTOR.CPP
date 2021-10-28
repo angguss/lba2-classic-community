@@ -87,6 +87,7 @@ static void	DrawListFiles( S32 flag )
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 static void	ScanFiles( char *selection, S32 flag )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 	U32	rc ;
 	char	*ptr ;
@@ -117,19 +118,28 @@ static void	ScanFiles( char *selection, S32 flag )
 		qsort( (void *)IndexFiles, NbFiles, sizeof( char * ), MySortCompFunc );
 
 	DrawListFiles( flag ) ;
+#else
+	// TODO: Implement
+#endif
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 static inline S32 ThereIsFiles( char *path )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 
 	return !_dos_findfirst( path, _A_NORMAL, &fileinfo )	;
+#else
+	// TODO: Implement
+	return 0;
+#endif
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 static void	ScanDirs( char *selection )
 {
+#ifdef DOS
 	struct	find_t	fileinfo ;
 	U32	rc ;
 	char	*ptr ;
@@ -184,11 +194,15 @@ static void	ScanDirs( char *selection )
 			}
 		}
 	}
+#else
+	// TODO: Implement
+#endif
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 static void	ScanDrives()
 {
+#ifdef DOS
 	unsigned	total ;
 	unsigned	drive ;
 	unsigned	orgdrive ;
@@ -216,6 +230,9 @@ static void	ScanDrives()
 	GetWindowButton( &Selector, 11, &DirsWindow ) ;
 	WinList( &DirsWindow, IndexDirs, NbDirs, 14 ) ;
 	FlipWindow( &DirsWindow ) ;
+#else
+	// TODO: Implement
+#endif
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
@@ -224,6 +241,7 @@ S32	FileSelector(	char *titre,
 			char *defaultname,
 			S32 flags )
 {
+#ifdef DOS
 	S32		n, num ;
 	S32		flag, handle ;
 	S32		mode = 0 ;
@@ -574,6 +592,9 @@ S32	FileSelector(	char *titre,
 	chdir( memopath ) ;
 
 	return rcode ;
+#else
+	return 0;
+#endif
 }
 
 //袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴
