@@ -6,5 +6,5 @@ void	InitWave()
 	void		*bad_handle[10];
 
 	for(i=0; i<10; i++)
-		bad_handle[i]=NULL;
+		bad_handle[i]=0;
 }

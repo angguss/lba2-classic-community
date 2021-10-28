@@ -1,13 +1,14 @@
-#include "\projet\lib386\lib_sys\adeline.h"
-#include "\projet\lib386\lib_sys\lib_sys.h"
+#include "..\lib_sys\adeline.h"
+#include "..\lib_sys\lib_sys.h"
 
 #pragma	library	("\gussdk21\libs\ultra0wc.lib");
 
+#ifdef DOS
 #include "forte.h"
 #include "gf1proto.h"
 #include "extern.h"
 #include "ultraerr.h"
-
+#endif
 
 extern	void	NewIRQ(void);
 
@@ -28,6 +29,7 @@ extern	UWORD	PlayRate;
 
 void	ResetCard(void)
 {
+#ifdef DOS
 	ULTRA_CFG	config;
 	UBYTE		RMode, LMode;
 
@@ -79,9 +81,12 @@ void	ResetCard(void)
 	/*set, go ! */
 	UltraGoVoice(0, RMode);
 	UltraGoVoice(1, LMode);
+#endif
 }
 
 void	StartDMACard(void)
 {
+#ifdef DOS
 	UltraDownload(BUFFER_DMA, DMA_8|DMA_CVT_2, CURRENT_R_BUFFER_CARD, BUFFER_SIZE, FALSE);
+#endif
 }

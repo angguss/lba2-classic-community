@@ -3,13 +3,13 @@
 			      (c) Adeline 1993
  *컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴*/
 
-#include "\projet\lib386\lib_sys\adeline.h"
-#include "\projet\lib386\lib_sys\lib_sys.h"
-#include "\projet\lib386\lib_samp\lib_wave.h"
+#include "..\lib_sys\adeline.h"
+#include "..\lib_sys\lib_sys.h"
+#include "..\lib_samp\lib_wave.h"
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	<dos.h>
-#include	<i86.h>
+//#include	<i86.h>
 
 char	*WaveError = "Error WaveDriver:";
 
@@ -33,14 +33,14 @@ LONG	WaveInitDLL(char *driverpathname)
    // Load driver file
    //
 
-	dll = FILE_read( driverpathname, NULL);
+	dll = (char*)FILE_read((signed char*)driverpathname, NULL);
 	if (dll==NULL)
 	{
 		printf("%s Could not load driver '%s'.\n", WaveError, driverpathname );
 		return FALSE ;
 	}
 
-	drvr=DLL_load(dll,DLLMEM_ALLOC | DLLSRC_MEM,NULL);
+	drvr=(char*)DLL_load(dll,DLLMEM_ALLOC | DLLSRC_MEM,NULL);
 	if (drvr==NULL)
 	{
 		printf("%s Invalid DLL image.\n", WaveError );
@@ -58,6 +58,7 @@ LONG	WaveInitDLL(char *driverpathname)
 /*-------------------------------------------------------------------------*/
 ULONG	InitWave()
 {
+#ifdef DOS
 	union	REGS	r;
 	struct	SREGS	sr;
 	void 	far	*fh;
@@ -107,10 +108,14 @@ ULONG	InitWave()
 	}
 
 	return Wave_Driver_Enable;
+#else
+	return 0;
+#endif
 }
 
 void	ClearWave()
 {
+#ifdef DOS
 	union	REGS	r;
 	struct	SREGS	sr;
 
@@ -119,5 +124,6 @@ void	ClearWave()
 
 /*----- Reset Sound Card (and IRQ controller) ---*/
 	_ClearCard();
+#endif
 }
 /*-------------------------------------------------------------------------*/
